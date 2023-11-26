@@ -15,12 +15,22 @@ class MiniatureDetection:
         print("Device: ", self.device)
 
 
-        def load_model(self, model_name):
-            '''
-            Loads YOLOv5 model from pytorch hub.
-            :return: Trained pytorch model.
-            '''
-
-            model = torch.hub.load("ultralytics/yolov5", "custom", path=model_name, force_reload=True)
-
-            return model
+    def load_model(self, model_name):
+        '''
+        Loads YOLOv5 model from pytorch hub.
+        :return: Trained pytorch model.
+        '''
+        model = torch.hub.load("ultralytics/yolov5", "custom", path=model_name, force_reload=True)
+        return model
+    
+    def score_frame(self, frame):
+        '''
+        Takes a frame as input and scores it with yolov5 model.
+        :param frame: input frame in numpy/list/tuple format.
+        :return: labels and coordinates of miniatures detected by model.
+        '''
+        self.model.to(self.device)
+        frame = [frame]
+        results = self.model(frame)
+        labels, cord = results.xyxyn[0][:, -1], results.xyxyn[:, :-1]
+        return labels, cord
