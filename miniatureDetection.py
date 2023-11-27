@@ -34,3 +34,11 @@ class MiniatureDetection:
         results = self.model(frame)
         labels, cord = results.xyxyn[0][:, -1], results.xyxyn[:, :-1]
         return labels, cord
+    
+    def class2label(self, x):
+        '''
+        Convert the label value to the corresponding label string.
+        :param x: label numerical value.
+        :return: corresponding label string.
+        '''
+        return self.classes[int(x)]
