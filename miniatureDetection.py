@@ -42,3 +42,24 @@ class MiniatureDetection:
         :return: corresponding label string.
         '''
         return self.classes[int(x)]
+    
+    def drawBoxes(self, results, frame):
+        '''
+        Draws the bounding boxes on the frame and writes the corresponding label.
+        :param results: labels and coordinates predicted by the model in the current frame.
+        :param frame: current scored frame.
+        :return: frame with bounding boxes and labels.
+        '''
+        labels, coord = results
+        n = len(labels)
+        x_shape, y_shape = frame.shape[0], frame.shape[1]
+
+        for i in range(n):
+            row = coord[i]
+            if row[4] >= 0.2:
+                x1, y1, x2, y2 = int[row[0]*x_shape], int[row[1]*y_shape], int[row[2]*x_shape], int[row[3]*y_shape]
+                bgr = (0, 255, 0)
+                cv2.rectangle(frame, (x1, y1), (x2, y2), bgr, 2)
+                cv2.putText(frame, self.class2label(labels[i]), (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.9, bgr, 2)
+
+        return frame
