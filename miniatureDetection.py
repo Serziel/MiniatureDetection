@@ -33,7 +33,7 @@ class MiniatureDetection:
         self.model.to(self.device)
         frame = [frame]
         results = self.model(frame)
-        labels, cord = results.xyxyn[0][:, -1], results.xyxyn[:, :-1]
+        labels, cord = results.xyxyn[0][:, -1], results.xyxyn[0][:, :-1]
         return labels, cord
     
     def class2label(self, x):
@@ -58,7 +58,7 @@ class MiniatureDetection:
         for i in range(n):
             row = coord[i]
             if row[4] >= 0.2:
-                x1, y1, x2, y2 = int[row[0]*x_shape], int[row[1]*y_shape], int[row[2]*x_shape], int[row[3]*y_shape]
+                x1, y1, x2, y2 = int(row[0]*x_shape), int(row[1]*y_shape), int(row[2]*x_shape), int(row[3]*y_shape)
                 bgr = (0, 255, 0)
                 cv2.rectangle(frame, (x1, y1), (x2, y2), bgr, 2)
                 cv2.putText(frame, self.class2label(labels[i]), (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.9, bgr, 2)
@@ -86,13 +86,13 @@ class MiniatureDetection:
             frame = self.drawBoxes(results, frame)
 
             end_time = time()
-            fps = 1/np.round(end_time - start_time, 2)
+            fps = 1/np.round(end_time - start_time, 3)
 
             cv2.putText(frame, f"FPS: {int(fps)}", (20,70), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
 
             cv2.imshow("Miniature Detection", frame)
 
-            if cv2.waitKey(100) == ord('q'):
+            if cv2.waitKey(1) == ord('q'):
                 break
         cam.release()
 
