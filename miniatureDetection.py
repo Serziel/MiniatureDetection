@@ -1,3 +1,4 @@
+from typing import Any
 import torch
 import numpy as np
 import cv2
@@ -63,3 +64,39 @@ class MiniatureDetection:
                 cv2.putText(frame, self.class2label(labels[i]), (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.9, bgr, 2)
 
         return frame
+    
+    def __call__(self):
+        '''
+        On class call, runs the loops to read the video frame by frame and write output in a new file
+        :return: void
+        '''
+        cam = cv2.VideoCapture(0)
+        if not cam.isOpened():
+            print("Errore: WebCam non trovata")
+            exit(1)
+
+        while True:
+            ret, frame = cam.read()
+            assert ret
+
+            frame = cv2.resize(frame, (640,640))
+
+            start_time = time()
+            results = self.score_frame(frame)
+            frame = self.drawBoxes(results, frame)
+
+            end_time = time()
+            fps = 1/np.round(end_time - start_time, 2)
+
+            cv2.putText(frame, f"FPS: {int(fps)}", (20,70), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
+
+            cv2.imshow("Miniature Detection", frame)
+
+            if cv2.waitKey(100) == ord('q'):
+                break
+        cam.release()
+
+
+if __name__ == "__main__":
+    miniDetector = MiniatureDetection(capture_index=0, model_name='best.pt')
+    miniDetector()
